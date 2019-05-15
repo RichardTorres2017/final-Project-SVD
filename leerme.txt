@@ -1,0 +1,17 @@
+El archivo principal se llama:
+
+compresionproyecto.m
+
+Para que funcione se sigue los siguientes pasos:
+1. Ingresar la imagen en la consola de matlab
+
+imagen='chica.tiff'
+
+2. Ingresar el valor de valores singulares 
+requeridos
+k=10
+
+3.
+[U1,S1,V1,U2,S2,V2,U3,S3,V3]=compresionproyecto(imagen,k)
+
+4. Esperar si no sale rápido.

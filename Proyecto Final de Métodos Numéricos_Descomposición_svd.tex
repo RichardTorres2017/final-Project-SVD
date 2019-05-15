@@ -1,0 +1,596 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[paper=a4, parskip=full, fontsize=12pt]{scrartcl} % A4 paper and 12pt font size
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+\usepackage[spanish]{babel} % English language/hyphenation
+\addto\captionsspanish{
+\def\tablename{Tabla}
+\def\listtablename{\'Indice de tablas}
+}
+
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+
+\usepackage{sectsty} % Allows customizing section commands
+\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[C]{\thepage/\pageref{LastPage}} % Page numbering for right footer
+
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+%\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+
+% Packages added by JP
+% --------------------
+\usepackage[]{mcode} % To insert MATLAB codes
+
+\usepackage{lastpage} % To number pages with the format 1/4,2/4,3/4, and 4/4.
+\makeatletter
+\renewcommand{\@oddfoot}{\hfil \thepage/\pageref{LastPage} \hfil}
+\makeatother
+
+\usepackage{graphicx} % Graphicx and subplots
+\usepackage{subfig}
+
+
+\addto\captionsenglish{\renewcommand{\figurename}{Figura}} % Spanish name for figures, tables, and appendix
+\addto\captionsenglish{\renewcommand{\tablename}{Tabla}}
+
+\addto\captionsenglish{\renewcommand{\appendixname}{Ap\'endice}}
+
+\usepackage[margin=1.0in]{geometry} % Set all margins to X in/cm
+
+\usepackage{indentfirst} % Indent after the section name
+\usepackage{parskip}
+\setlength{\parindent}{1cm}
+
+\usepackage[header,title,titletoc]{appendix} % Including the appendix
+
+
+
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+\normalfont \normalsize
+\textsc{Universidad Yachay Tech, Escuela de Ciencias Matem\'aticas e Inform\'aticas} \\ [15pt] % Your university, school and/or department name(s)
+%\textsc{Formato para los reportes de laboratorio del curso de M\'etodos Num\'ericos} \\ [15pt]
+%\textsc{Realizado por Dr. Jean Piero Su\'arez y Dra. Zenaida Castillo} \\ [25pt]
+\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+\huge PROYECTO DE COMPRESIÓN DE IMAGENES UTILIZANDO LA DESCOMPOSICIÓN EN VALORES SINGULARES SVD \\ % The assignment title
+\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
+}
+
+\newtheorem{theorem}{Definición}
+\newtheorem{lem}{Lema}
+\newtheorem{theo}{Teorema}
+
+\author{
+%Richard Torres \thanks{\texttt{Correo electr\'onico del primer autor}}, Vanessa Hinojosa \thanks{\texttt{Correo electr\'onico del primer autor}}, Diana Pereira \thanks{\texttt{Correo electr\'onico del primer autor}}, Karen Sánchez \thanks{\texttt{Correo electr\'onico del primer autor}}}}
+}
+\author{Richard Torres\thanks{\texttt{richard.torres@yachaytech.edu.ec}} 
+\and Vanessa Hinojosa\thanks{\texttt{vanessa.hinojosa@yachaytech.edu.ec}}
+\and Diana Pereira \thanks{\texttt{diana.pereira@yachaytech.edu.ec}}
+\and Karen Sánchez\thanks{\texttt{karen.sanchez@yachaytech.edu.ecr}}}
+
+
+\date{\normalsize 21 de Julio del 2016} % Today's date or a custom date
+
+\begin{document}
+
+\maketitle % Print the title
+
+\section{RESUMEN}
+En este proyecto se comprimirá la información que conforma una imagen con el fin de conseguir una imagen parecida pero que ocupe menor espacio de almacenamiento. Para ello se utilizó la descomposición SVD, así también el método de deflación y método de potencias. Se pudo observar que se obtiene una imagen apreciable utilizando un bajo número de valores singulares, considerando el tamaño de la matriz que representa la imagen. Se observó que el número de valores singulares necesarios para obtener una imagen clara no es estándar, depende de cada imagen. Sin embargo, para las imágenes tratadas los valores singulares necesarios son muy pocos en relación a todos los que contienen la imagen. 
+
+\
+\section{PLANTEAMIENTO DEL PROBLEMA}
+La compresión de imágenes abarca un conjunto de técnicas que se aplican a las imágenes, y es un tema importante debido a que muchas de las imágenes utilizan una gran cantidad de datos, del orden de mega y giga bytes. La compresión permite reducir el volumen de información para  almacenar y/o transmitir los datos de las imágenes eficientemente, pero sin una pérdida significativa de la calidad de la imagen.
+\
+  
+Para este  proyecto se requiere reducir los rasgos redundantes de una imagen para conseguir caracteres relevantes y poder distinguir una imagen. Nos basamos en el recurso de que una imagen puede ser representada por una matriz, por lo que para este proyecto se obtiene la aproximación de la matriz original mediante la descomposición en valores singulares $SVD$.  Debido a que es necesario calcular autovalores y autovectores, el método de las potencias y el método de deflación son ideales para obtener una aproximación con gran precisión. 
+\section{METODOLOGÍA}
+\
+Para dar solución a este problema se siguió el siguiente esquema:
+\
+
+\begin{figure}[h]
+\centering
+
+\subfloat{\includegraphics[width=4.50cm]{diagrama}} 
+\caption{Diagrama explicativo del procedimiento realizado. }
+\label{v15}
+\end{figure}
+\
+
+La descomposición en valores singulares requiere un conocimiento  de Álgebra, por lo que es importante utilizar ciertos teoremas correspondientess al tema tratado.
+\
+
+\begin{theo} \textbf{Descomposición en Valores Singulares}\\
+\
+
+\textit{Cada matriz $A$ de dimensión $m\times n$ puede ser factorizada en el producto de $U$ ;una matriz unitaria de orden $m$, $V$; matriz unitaria de orden $n$, y $D$; matriz diagonal que contiene que contiene los valores singulares ${\sigma_{1},\sigma_{2},...,\sigma_{k}}$ de $A$ en las entradas de su diagonal.}
+\begin{equation}
+A=UD{ V }^{ T }=\left( { u }_{ 1 }{ u }_{ 2 }...{ u }_{ k }{ u }_{ k+1 }...{ u }_{ n } \right) \left( \begin{matrix} { \sigma  }_{ 1 } &  &  &  &  &  &  \\  & { \sigma  }_{ 2 } &  &  &  &  &  \\  &  & \ddots  &  &  &  &  \\  &  &  & { \sigma  }_{ k } &  &  &  \\  &  &  &  & 0 &  &  \\  &  &  &  &  & \ddots  &  \\  &  &  &  &  &  & 0 \end{matrix} \right) \left( \begin{matrix} { v }_{ 1 }^{ T } \\ { v }_{ 2 }^{ T } \\ \vdots  \\ { v }_{ k }^{ T } \\ { v }_{ k+1 }^{ T } \\ \vdots  \\ { v }_{ n }^{ T } \end{matrix} \right) \\ 
+\end{equation}
+\end{theo}
+\
+\begin{theo} \textbf{Valores Singulares}\\
+\
+
+$A$ es una matriz $m\times n$, los valores singulares de $A$ son las raíces cuadradas de los valores propios o autovalores de $A^{ T }A$ y se denotan por  ${\sigma_{1},\sigma_{2},...,\sigma_{n}}$ donde ${\sigma_{1}\ge \sigma_{2}\ge ,...,\sigma_{n}}$. Entonces:
+\begin{equation}
+{ \sigma  }_{ i }=\sqrt { { \lambda  }_{ i } } 
+\end{equation}
+\end{theo}
+\begin{lem} \textbf{Construcción Matriz V}\\
+\
+
+Para encontrar la matriz $V$ se debe encontrar una base ortonormal $\left( { v }_{ 1 }{ v }_{ 2 }......{ v }_{ n } \right)$  en ${ \Re  }^{ n }$ consistente de los vectores propios de una matriz simétrica $n\times n$ 
+ $A^{ T }A$, entonces:
+ \begin{equation}
+ V=\left( \begin{matrix} { v }_{ 1 } & { v }_{ 2 } & \cdots  & { v }_{ n } \end{matrix} \right) 
+\end{equation}
+\end {lem}
+ 
+ \begin{theorem} \textbf{Construcción Matriz U}\\
+\
+
+Para construir la matriz ortogonal $U$ se realiza la descomposición $QR$ implementando el método de Gram- Schmidt.
+\
+
+\textbf{Descomposición $QR$}
+\
+La descomposición o factorización $QR$ es la descomposición de una matriz cuadrada  $V$ en el producto de una matriz ortogonal $Q$ y una matriz triangular superior $R$. Uno de los métodos utilizados para la factorización $QR$ es el método de Gram- Schmidt.\\
+\
+
+\textbf{Proceso de Gram- Schmidt}
+ Se considera el procedimiento de Gram- Schmidt con los vectores columnas de la matriz V,\\
+ \begin{center}
+  $V=\left( \begin{matrix} { v }_{ 1 } & { v }_{ 2 } & \cdots  & { v }_{ n } \end{matrix} \right) $
+ \end{center}
+  Luego,\\\\
+  ${ u }_{ 1 }={ v }_{ 1 },\quad \quad { e }_{ 1 }=\frac { { u }_{ 1 } }{ \left\| { u }_{ 1 } \right\|  } $\\
+  ${ u }_{ 2 }=v_{ 2 }-\left( { v }_{ 2 }\cdot { e }_{ 1 } \right) { e }_{ 1 },\quad { e }_{ 2 }=\frac { { u }_{ 2 } }
+   { \left\| { u }_{ 2 } \right\|  } $\\\\
+   Entonces,
+\begin{equation}
+   { u }_{ i+1 }=v_{ i+1 }-\left( { v }_{ i+1 }\cdot { e }_{ 1 } \right) { e }_{ 1 }-\left( { v }_{ i+1 }\cdot { e }_{ 2 } \right)
+   {  e }_{ 21 }-\dots -\left( { v }_{ i+1 }\cdot { e }_{ i } \right) { e }_{ i },\quad { e }_{ i+1 }=\frac { { u }_{ i+1 } }
+   { \left\| { u }_{ i+1 } \right\|  }  
+\end{equation}
+Finalmente tenemos:
+\begin{equation}
+V=\left[ \begin{matrix} { v }_{ 1 } & { v }_{ 2 } & \cdots  & { v }_{ n } \end{matrix} \right] =\underbrace { \left[ \begin{matrix} e_{ 1 } & { e }_{ 2 } & \cdots  & { e }_{ n } \end{matrix} \right]  }_{ Q } \underbrace { \begin{bmatrix} { v }_{ 1 }\cdot e_{ 1 } & { v }_{ 2 }\cdot e_{ 1 } & \cdots  & { v }_{ n }\cdot e_{ 1 } \\ 0 & { v }_{ 2 }\cdot e_{ 2 } & \cdots  & { v }_{ n }\cdot e_{ 2 } \\ \vdots  & \vdots  & \ddots  & \vdots  \\ 0 & 0 & 0 & { v }_{ n }\cdot e_{ n } \end{bmatrix} }_{ R } =QR
+\end{equation}
+donde la matriz $Q=U$
+\end{theorem}
+\
+
+\begin{theorem} \textbf{Valor propio dominante}
+\
+
+Se dice que $A$ tiene valor propio dominante si existe un v.p. $\lambda$ verificando: $\left| { \lambda  }_{ 1 } \right| >\quad \left| { \lambda  }_{ i } \right| ,\quad i=2,3,...,n$.
+\end{theorem}
+\
+Nuestro próximo objetivo es el cálculo aproximado de ${ \lambda  }_{ 1 }$ Para ello, supongamos que la matriz es  diagonalizable;  es  decir,  existe  una  base  de  vectores  propios $\left\{ { u }_{ 1 },\quad { u }_{ 2 },\quad ...,\quad { u }_{ n } \right\}$ tales que $A{ u }_{i}= {\lambda  }_{ i }{ u }_{i}$
+
+\
+
+\begin{lem} \textbf{Método de la Potencia}
+\
+
+Se describe el método de la potencia para calcular el autopar dominante. Su extensión en el método de la potencia inversa permite encontrar cualquier valor propio siempre que se conozca una aproximación inicial. Algunos esquemas para encontrar valores propios utilizan otros métodos que convergen rápidamente, pero son de precisión limitada. Razón por la cual se utiliza el método de la potencia inversa para refinar los valores numéricos y ganar precisión completa.
+\
+
+\textbf{Definiciones:}\\\\	
+\textbf{\emph{Autovalor dominante}}\\
+Es el autovalor $\lambda_{1}$ más grande en valor absoluto de la matriz $A$.\\\\
+\textbf{\emph{Autovector dominante}}\\
+Es el autovector $v_{1}$ correspondiente al autovalor dominante.\\\\
+\textbf{\emph{Autovector normalizado}}\\
+Un autovector se dice normalizado si la coordenada de mayor magnitud es igual a la unidad, es decir igual a uno. 
+\end{lem}
+\
+
+\begin{theo} \textbf{Teorema- Método de la Potencia}
+\
+
+Suponemos una matriz $A$ de $n\times n$ con $n$ autovalores diferentes $\lambda_{1},\lambda_{2},\lambda_{3},..,\lambda_{n}$ y que estén ordenados en magnitud decreciente 
+$\left| { \lambda  }_{ 1 } \right| >\left| { \lambda  }_{ 2 } \right| \ge \left| { \lambda  }_{ 3 } \right| \ge \dots \ge \left| { \lambda  }_{ n } \right|$. Si $x_{0}$ es seleccionado apropiadamente, entonces las secuencias ${ { x }_{ k }=\left( \begin{matrix} { x }_{ 1 }^{ (k) } & { x }_{ 2 }^{ (k) } & \cdots  & { x }_{ n }^{ (k) } \end{matrix} \right)  }^{ T }$ y $c_{k}$ generado recursivamente por\\
+\begin{center}
+$Y_{k}=AX{k}$ y $Y_{k+1}=\frac { 1 }{ { c }_{ k+1 } } X_{k} $, donde 
+\end{center}
+\begin{center}
+${ c }_{ k+1 }={ x }_{ j }^{ (k) }$ y ${ x }_{ j }^{ (k) }=\max _{ 1<i<n }{ \left\{ \left| { x }_{ i }^{ (k) } \right| 
+ \right\}  }  $\\
+  pueden converger al  autovector $v_{1}$ y autovalor $\lambda_{1}$ 
+\end{center}
+\begin{center}
+Entonces, $ \lim _{ k\longrightarrow \infty  }{ { x }_{ k }=v_{ k } }$ y $\lim _{ k\longrightarrow \infty  }{ { c }_{ k }=\lambda _{ k } } $ 
+\end{center}
+\end{theo}
+\
+
+\begin{lem} \textbf{Deflación}
+\
+
+Este es un método que es de utilidad si se conoce un valor y vector propio de $A$
+de forma que el resto de valores propios se obtienen desde una matriz más sencilla como se indica en el resultado siguiente:
+\end{lem}
+\
+
+\begin{theo}\textbf{Deflación}
+\
+
+Si ${\lambda}_{1}$ y ${u}_{1}$ son valor y vector propios de $A$ y $v$ es un vector tal que ${v}^{T}.{u}_{1}=1$; entonces, los valores propios de la matriz $B= A-{\lambda}_{1}({u}_{1}){v}^{T}$ son: $0,{\lambda}_{1}, ...,{\lambda}_{n}$, donde ${\lambda}_{i}$ es valor propio de $A$.
+\end{theo}
+\
+
+\begin{theorem} \textbf{Método de Hotelling}
+\
+
+Si $A$ es una matriz normal entonces el Teorema de Schur asegura que existe una base ortonormal de autovectores $\left\{ { p }_{ 1 },\quad { p }_{ 2 },\quad ...,\quad { p }_{ n } \right\}$; esto es, tal que:
+\[{ p }_{ i }^{*}{ p }_{ j }={ \delta  }_{ ij }\quad ,\quad \forall \quad i,j=1,\quad ...,n\]
+Se construye entonces la matriz:
+\[A_{ 1 }=\quad A{ p }_{ 1 }{ p }_{ 1 }^{ * }\]
+que verifica:
+\[A_{ 1 }{ p }_{ j }=0\quad ,\quad si\quad j=1\\
+A_{ 1 }{ p }_{ j }={ \lambda  }_{ j }{ p }_{ j }\quad ,\quad si\quad j\neq 1\\
+\]
+Por tanto, $Sp({ A }_{ 1 })=\left\{ 0,\quad { \lambda  }_{ 2 },\quad ...,{ \lambda  }_{ n } \right\}$
+Aplicando el método de la potencia iterada a la matriz ${A}_{1}$ se obtiene su autovalor dominante, que es el autovalor intermedio ${ \lambda  }_{ 2 }$.
+\end{theorem}
+
+\begin{center}
+\textbf{CÓDIGOS ELABORADOS}
+\end{center}
+\begin{itemize}
+    \item Def$\_$potencias.m
+    \item Power$\_$method$\_$Z.m
+    \item compresionproyecto.m
+    \item codigoSVD.m  
+    \item Def$\_$Hotelling.m
+    \item gschmidt.m
+    \item main$\_$eig$\_$def.m
+    \item error$\_$relativo$\_$SVD.m
+    \item partial$\_$SVD.m
+    \item USV$\_$geometria.m
+    \item valores$\_$S$\_$aproximacion.m
+\end{itemize}
+\
+\begin{center}
+\textbf{DESCRIPCIÓN DE LOS CÓDIGOS }
+
+\end{center}
+
+
+\
+
+El programa \textbf{compresionproyecto.m} comprime una imagen utilizando la técnica SVD, requiere la imagen y el número de valores singulares como dato de entrada.
+\\
+
+El programa \textbf{schmidt.m} ortonormaliza vectores utilizando el procedimiento de Gram Smchmidt y la factorización QR.
+\\
+
+El programa \textbf{Power$\_$method$\_$Z.m }calcula los auto valore y auto vectores de módulo máximo, este programa se utiliza dentro de \textbf{Def$\_$potencias.m} el cual calcula $k$ autovalores de una matriz simétrica $A$ de orden $n$.
+\\
+
+Utilizando el método de deflación de Hotelling en el programa \textbf{Def$\_$Hotelling .m} se evalúa el autopar de módulo máximo de $A$ de orden $n$.
+\\
+
+\textbf{main$\_$eig$\_$def.m} se encarga de Evaluar el autopar de A dependiendo del valor de p, usando el método de Deflación de Hotelling.\\
+
+El código \textbf{codigoSVD.m} se encarga de calcular la descomposición SVD, hace uso de todas las anteriores funciones para su cálculo. \\
+
+El programa \textbf{error$\_$relativo$\_$SVD.m} permite encontrar los errores relativos y gráfica respectiva de la imagen, con la descomposición SVD, con distintos valores de k (valores singulares).\\
+
+Con el programa \textbf{partial$\_$SVD.m} se calcula la descomposición SVD. \\
+
+El programa \textbf{USV$\_$geometria.m} permite visualizar el efecto geométrico que tiene premultiplicar a la matriz $V$ por $A$ y a la matriz $S$ por $U$, para matrices aleatorias de dimensión 2.\\
+
+El programa \textbf{valores$\_$S$\_$aproximacion.m} permite mostrar y graficar los valores singulares de la matriz que representa cada imagen.\\
+
+\section{DISCUSIÓN DE RESULTADOS}
+
+
+\textbf{Efecto geométrico}
+\
+
+En la imagen 4.1 se puede observar el efecto geométrico que tiene multiplicar A  con V y U con S.
+Se puede ver que $AV$ tiene un máximo en ${v}_{1}$ y un mínimo en ${v}_{2}$. De esta manera  se optimiza la función sobre el circulo unitario reduciendo el problema complejo a uno bastante estándar. 
+$V$ son los vectores unitarios que pertenecen a $S$, en otras palabras son pre imágenes de semiejes principales de AS modificados en dirección y sentido.
+
+\
+
+Los valores singulares describen la cantidad de estiramiento en las diferentes direcciones, entonces cuando se obtiene U*S la circunferencia unitaria descrita por vectores normalizados se deforma convirtiéndose en una elipse cuyos semiejes vienen dados por los vectores afectados por los valores singulares. Donde U son las direcciones de los semiejes principales de AS y numerados en correspondencia con los valeres singulares.\\
+\begin{figure}[h]
+\centering
+
+\subfloat{\includegraphics[width=7.0cm]{efecto}} 
+\caption{Comparación Efecto Geométrico de producto $AV$ y $US$ en una matriz 2*2. }
+\label{v15}
+\end{figure}
+
+\indent La igualdad $AV = US$ se puede interpretar como que $A$
+toma los elementos de una base ortonormal (las columnas de $V$) y los manda
+a los generadores de la imagen de $A$ que son los vectores columnas de $U$
+estirados o contraídos por los ${ \sigma  }_{ j }$ correspondientes.
+\
+
+Si $m > n$ (más filas que columnas), al hacer el producto $US$ se pierden las
+últimas columnas de $U$. Entonces, hubiera sido lo mismo quedarse con una
+$\hat { S }$ cuadrada (eliminando las filas nulas) y una $\hat { U } \epsilon {\mathbb{C} }^{ m*n }$ (eliminando las columnas correspondientes). Esta es la forma reducida de la $SVD$ y también podemos pensar a la $SVD$ a partir de completar aquella.
+\
+
+\indent Ahora, dado que los ${ \sigma  }_{ j }$ tienen distinta magnitud, el efecto de $A$ será mayor en las direcciones dadas por los de mayor valor, es decir los primeros
+$({\sigma}_{1};{\sigma}_{2}, ...)$. Si nos quedamos sólo con las direcciones donde $A$ tiene mayor efecto y eliminamos las otras, entonces no se perderá demasiada información,
+pero habremos almacenado muchos menos datos.
+
+\textbf{Imágenes con Diferentes Valores de p}
+\
+
+En la imagen 4.2 se observa la aproximación de la imagen $"chica"$. Es claro que con 5 valores de $p$ la imagen aún no es distinguible, utilizando $p=15$ la imagen es distinguible. Hay que tomar en cuenta que siendo la matriz original de la imagen de dimensiones $512*512$ utilizar tan solo $15$ valores singulares es bastante óptimo. Con $25$ valores singulares se obtiene una imagen muy clara, ademas los detalles de fondo son distinguibles. Con $p=35$ y $45$ la  imagen tiene muy pocas diferencias con la original. Esto muestra que la compresión $SVD$ es muy eficiente.  
+
+\begin{figure}[h]
+\centering
+\subfloat[real]  {\includegraphics[width=50mm]{coriginal}}
+\subfloat[p=5] {\includegraphics[width=50mm]{c5}}
+\
+
+\subfloat[p=15] {\includegraphics[width=50mm]{c15}}
+\subfloat[p=25] {\includegraphics[width=50mm]{c25}}
+\
+
+\subfloat[p=35] {\includegraphics[width=50mm]{c35}}
+\subfloat[p=45] {\includegraphics[width=50mm]{c45}}
+\caption{Los resultados de usar diferentes números de $p$ para aproximar la imagen $"chica"$. } \label{fig:Chica}
+\end{figure}
+En la imagen 4.3 se aprecia la compresión de la imagen denominada $"vegetales"$. Se puede observar que cuando se toma $p=5$ la imagen no se puede reconocer. Cuando se incrementa a 15 la imagen es más distinguible. Con valores de 25, 35 y 45 la imagen aumenta considerablemente su calidad. 
+\newpage
+\begin{figure}[h]
+\centering
+\subfloat[real]  {\includegraphics[width=50mm]{vreal}}
+\subfloat[p=5] {\includegraphics[width=50mm]{v5}}
+\
+
+\subfloat[p=15] {\includegraphics[width=50mm]{v15}}
+\subfloat[p=25] {\includegraphics[width=50mm]{v25}}
+\
+
+\subfloat[p=35] {\includegraphics[width=50mm]{v35}}
+\subfloat[p=45] {\includegraphics[width=50mm]{v45}}
+\caption{Los resultados de usar diferentes números de $p$ para aproximar la imagen $"vegetales"$. } \label{fig:Chica}
+\end{figure}
+\newpage
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c |c |}
+\hline \textbf{Chica Rojo} & \textbf{Vegetal Rojo}\\
+\hline 365.6227& 303.8652\\
+\hline 43.8946&49.0642\\
+\hline  33.9613&27.1902\\
+\hline  27.6643& 26.3689\\
+\hline   23.2035& 18.8253\\
+\hline   22.5182& 15.5336\\
+\hline   16.1771&15.0075\\
+\hline  15.2124&12.4492\\
+\hline   12.0248&11.6937\\
+\hline   11.4141&11.2532\\
+\hline
+\end{tabular}
+\caption{Comparación de valores singulares de las imágenes chica.tiff y vegetales.tiff referente al color rojo.}
+\end{center}
+\end{table}
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c |c |}
+\hline \textbf{Chica Azul} & \textbf{Vegetal Azul}\\
+\hline 214.0025&138.6910 \\
+\hline  27.5215&42.5637\\
+\hline   25.2558&  26.9766\\
+\hline   17.0589&26.6432\\
+\hline   16.3318& 21.9194\\
+\hline   14.4995&19.6688\\
+\hline  12.5013&18.4798\\
+\hline   10.8959&15.2581\\
+\hline  10.4112&13.1657\\
+\hline   9.5104&12.9927\\
+\hline
+\end{tabular}
+\caption{Comparación de valores singulares de las imágenes chica.tiff y vegetales.tiff referente al color azul.}
+\end{center}
+\end{table}
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c |c |}
+\hline \textbf{Chica Verde} & \textbf{Vegetal Verde}\\
+\hline 205.9599&238.6527\\
+ \hline  45.9632&82.3208\\
+ \hline  36.4562&56.3878\\
+\hline   28.6373&51.7873\\
+\hline   25.5174&37.8863\\
+\hline   21.2405& 29.6172\\
+\hline   20.3553& 23.2716\\
+\hline   17.7172& 21.8246\\
+\hline   14.8978&21.1490\\
+\hline   13.8124&19.7213\\
+\hline
+\end{tabular}
+\caption{Comparación de valores singulares de las imágenes chica.tiff y vegetales.tiff referente al color verde.}
+\end{center}
+\end{table}
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c |c |c |c |}
+\hline \textbf{p \tiny{ (número valores singulares)}} & \textbf{Error color rojo}
+&\textbf{Error color verde}&\textbf{Error color azul}\\
+\hline	  5&0.0616&0.1031&0.0678\\
+\hline  15&0.0207&0.0448&0.0284\\
+\hline  25&0.0129&0.0278&0.0186\\
+\hline  35&0.0094&0.0210&0.0145\\
+\hline  45& 0.0075&0.0165&0.0120\\
+\hline
+\end{tabular}
+\caption{Errores para la imagen chica.tiff con p=5, 15, 25, 35 y 45 valores singulares.}
+\end{center}
+\end{table}
+\newpage
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c |c |c |c |}
+\hline \textbf{p\tiny{ (número valores singulares)}} & \textbf{Error color rojo}
+&\textbf{Error color verde}&\textbf{Error color azul}\\
+\hline	  5&0.0511&0.1241&0.1418\\
+\hline  15&0.0246&0.0477&0.0608\\
+\hline  25&0.0153&0.0280&0.0371\\
+\hline  35&0.0113&0.0205&0.0247\\
+\hline  45&0.0088&0.0154&0.0186\\
+\hline
+\end{tabular}
+\caption{Tabla de errores para  la imagen vegetales.tiff con p=5, 15, 25, 35 y 45 valores singulares.}
+\end{center}
+\end{table}
+
+
+\newpage
+\begin{figure}[h]
+\centering
+
+\subfloat{\includegraphics[width=9.0cm]{valores_s_chica}} 
+\caption{Gráfica de los valores singulares de cada color de la imagen $"chica"$. }
+\label{v15}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+
+\subfloat{\includegraphics[width=9.0cm]{valores_s_vegetales}} 
+\caption{Gráfica de los valores singulares de cada color de la imagen $"vegetales"$. }
+\label{v15}
+\end{figure}
+
+En la tabla 4.1 se puede observar que, a excepción del segundo valor singular, todos los valores singulares correspondientes al color rojo de la imagen $"chica"$  (Figura 4.4) son mayores comparados con los de la imagen $"vegetales"$ (Figura 4.5). Esto podría ser a que la imagen $"chica"$ tiene más tonos de color rojo que la imagen $"vegetales"$. Por ello en la imagen $"vegetales"$ requerimos de menores valores singulares para generar una buena aproximación, debido a que se aproximan más rápido a cero en comparación con la imagen $"chica"$.
+\begin{figure}[h]
+\centering
+
+\subfloat{\includegraphics[width=9.0cm]{error_chica}} 
+\caption{Gráfica del error relativo del color rojo de la imagen $"chica"$. }
+\label{v15}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+
+\subfloat{\includegraphics[width=9.0cm]{error_vegetal}} 
+\caption{Gráfica del error relativo del color rojo de la imagen $"vegetal"$. }
+\label{v15}
+\end{figure}
+
+\
+
+De acuerdo a la tonalidad de la imagen se presentan los valores que determinan las combinaciones de colores. Así mismo, se observa que en las imágenes con mayor predominio de colores primarios tienen valores singulares menores a las imágenes que presentan una mezcla de estos colores. Es por eso que, al realizar la reducción de imágenes aquellas con valores singulares mayores perderán más información por la descomposición SVD, eso se puede constatar en las tablas 4.4-4.5 que muestran los errores en cada color. En un caso concreto, el color rojo de la imagen $"chica"$ tiene un error de $0.0616$ (Figura 4.6) comparado al error de la imagen $"vegetales"$ que tiene un error de $0.0511$ (Figura 4.7). Este fenómeno es más notorio en la matriz de color azul en la que el error de la imagen $"chica"$ es de $0.0678$ mientras que en el error de la imagen $"vegetales"$ es de $0.1418$.
+
+
+
+
+De este análisis se puede decir que la descomposición  en valores singulares toma un  tiempo considerable  para que realice el proceso, desde el punto de vista computacional. Además, el problema de que su aplicación es fuertemente condicionada debido al exceso cálculos asociados.
+Además este método podría presentar complicaciones si los valores singulares son muy pequeños y sobrepasan el epsilon de la máquina, pero esté método presenta problemas cuando los valores singulares son 0.
+\
+
+La ventaja más importante de esta descomposición es que cualquier matriz puede ser descompuesta  en valores singulares. También constituye uno de los métodos más baratos para compresión de imágenes. Además, utilizar compresión por valores singulares reduce el espacio de almacenamiento necesario, acelera el cálculo ya que utiliza una matriz de menor dimensión con respecto a la original. También, elimina información redundante.
+
+\
+
+\section{CONCLUSIONES}
+\
+
+En conclusión ciertas imágenes contienen valores singulares mayores que otras dependiendo de los tonos que presenten, y aplicando la descomposición SVD fue notable que en la matriz de cada color aquellos valores singulares mayores perdieron más información que los valores singulares menores y esto afectó a la nitidez de la imagen. 
+\
+
+Además, la metodología empleada permitió facilitar los cálculos en el computador. Es así que, por ejemplo el método de deflación nos permite encontrar los autovalores de módulo mayor, evitando el proceso algebraico de calcularlos a partir del polinomio característico.
+\
+
+Es importante considerar que la imagen a comprimir da una matriz tridimensional por ser a color, por lo que se trabajó en bloques separados al realizar la descomposición SVD y finalmente se concatenó para obtener una imagen a color con menor volumen de datos pero distinguible.  
+\newpage
+\begin{thebibliography}{99}
+
+\bibitem{Cd94} Kincaid David,
+ \emph{  Numerical Mathematics and Computing },
+  Sixth Edition, (2008).
+ 
+  \bibitem{Cd94} Butt Rizwan,
+ \emph{  Introduction to Numerical Analysis Using Matlab },
+  Jones and Bartlett Publishers, (2010).
+
+  \bibitem{Cd94} Burden Richard,
+ \emph{  Análisis Numérico },
+  Thomson and Learning, Séptima Edición.
+  
+    \bibitem{Cd94} Faul C.,
+ \emph{  A Concise Introduction to Numerical Analysis },
+  University of Cambrigde UK, A Chapman and Hall Book, (2016).
+  
+	
+
+\end{thebibliography}
+\newpage
+
+
+
+\begin{appendices}
+\section{Lista de Programas Computacionales}
+Lista de todos los programas utilizados para generar los resultados presentados en la secci\'on 4. 
+
+\lstinputlisting{compresionproyecto.m}
+\lstinputlisting{Power_method_Z.m}
+\lstinputlisting{codigoSVD.m }
+\lstinputlisting{Def_Hotelling.m}
+\lstinputlisting{Def_potencias.m }
+\lstinputlisting{gschmidt.m }
+\lstinputlisting{main_eig_def.m }
+\lstinputlisting{error_relativo_SVD.m }
+\lstinputlisting{partial_SVD.m}
+\lstinputlisting{USV_geometria.m }
+\lstinputlisting{valores_S_aproximacion.m }
+
+
+
+\end{appendices}
+\end{document}
